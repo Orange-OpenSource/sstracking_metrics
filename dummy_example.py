@@ -16,7 +16,6 @@ from pathlib import Path
 # Add tracking_metrics to Python path
 sys.path.append("tracking_metrics")
 
-import torch
 from metric_evaluator import MetricEvaluator
 from utils_metrics import Detection, angular_distance
 

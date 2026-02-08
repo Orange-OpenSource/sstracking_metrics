@@ -95,16 +95,10 @@ Both scripts generate YAML files containing metric results in the `./dummy_examp
 
 ## Environment Setup
 
-* To run both example scripts:
+* To run both example scripts, run the following command:
 
   ```bash
   pip install -r requirements.txt
-  ```
-
-* To run only `dummy_example_metrics.py`:
-
-  ```bash
-  pip install -r requirements_metrics.txt
   ```
 
 It is recommended to use a dedicated virtual environment:
