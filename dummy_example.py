@@ -31,7 +31,9 @@ if __name__ == "__main__":
     # ----------------------
 
     # Data paths
-    root = Path("/home/dxbz2376/Data/librijump/final/")  # change with actual local folder
+    root = Path(
+        "/home/dxbz2376/Data/librijump/final/"
+    )  # change with actual local folder
     path_results = Path("dummy_examples")
     J = 1  # Subset of LibriJump (1, 2 or 3)
 
@@ -89,9 +91,7 @@ if __name__ == "__main__":
         gt_doa = read_array(item["path_doas"])
 
         # Convert to frame resolution using STFT parameters
-        gt_doa = time_to_frame(
-            torch.tensor(gt_doa), spectro_params=spectro_params
-        ).numpy()
+        gt_doa = time_to_frame(gt_doa.copy(), spectro_params=spectro_params)
 
         # Generate predictions (dummy example using ground truth as prediction)
         pr_doa = gt_doa.copy()

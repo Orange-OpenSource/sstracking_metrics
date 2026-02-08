@@ -13,8 +13,7 @@ import json
 
 import librosa
 import numpy as np
-import torch
-from einops import rearrange
+from numpy.lib.stride_tricks import sliding_window_view
 
 
 def read_audio(path: str, FS):
@@ -45,13 +44,13 @@ def read_array(path: str):
     return array
 
 
-def time_to_frame(tensor: torch.Tensor, spectro_params: dict):
+def time_to_frame(tensor: np.ndarray, spectro_params: dict):
     """
     Converts time-domain signal to frame-level representation using librosa stft parameters.
     (https://librosa.org/doc/0.11.0/generated/librosa.stft.html)
 
     Args:
-        tensor (torch.Tensor): Input tensor with shape [time, ...].
+        tensor (np.ndarray): Input array with shape [time, ...].
         spectro_params (dict): Dictionary containing spectral parameters including:
             - n_fft: FFT size
             - win_length: Window length
@@ -60,28 +59,29 @@ def time_to_frame(tensor: torch.Tensor, spectro_params: dict):
             - pad_mode: Type of padding to use
 
     Returns:
-        torch.Tensor: Frame-level representation with shape [frames, ...].
+        np.ndarray: Frame-level representation with shape [frames, ...].
     """
-    tensor = rearrange(tensor.clone(), "t ... -> ... t")
-
-    # to comply with stft "center" parameter
-    # we pad 0 in the begining and end of vad to have the frame t centered at t*hop_size
     if spectro_params["center"]:
-        tensor = torch.nn.functional.pad(
+        pad = spectro_params["n_fft"] // 2
+        pad_width = [(pad, pad)] + [(0, 0)] * (tensor.ndim - 1)
+
+        tensor = np.pad(
             tensor,
-            pad=[spectro_params["n_fft"] // 2, spectro_params["n_fft"] // 2],
+            pad_width=pad_width,
             mode=spectro_params["pad_mode"],
         )
 
-    tensor_per_frame = tensor.unfold(
-        dimension=-1,
-        size=spectro_params["win_length"],
-        step=spectro_params["hop_length"],
-    ).clone()  # [..., frames, frame_size]
+    windows = sliding_window_view(
+        tensor,
+        window_shape=spectro_params["win_length"],
+        axis=0,
+    )  # windows shape: [time - win_length + 1, ..., win_length]
 
-    out = torch.nanmean(tensor_per_frame, dim=-1)
+    tensor_per_frame = windows[:: spectro_params["hop_length"]]
 
-    return rearrange(out.clone(), " ... t -> t ...")
+    out = np.nanmean(tensor_per_frame, axis=-1)
+
+    return out
 
 
 def load_json(path: str, path_root: str):

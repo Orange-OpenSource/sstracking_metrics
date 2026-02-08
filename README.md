@@ -5,7 +5,7 @@
 This repository provides a Python pipeline for evaluating Sound Source Tracking (SST) systems. Given a multichannel audio recording, a SST system estimates the time-varying positions of sound sources. 
 This toolkit enables the quantitative evaluation of such systems using standard tracking metrics covering detection, localization, and association objectives.
 
-The repository also includes utilities to read and process items from the [LibriJump SST evaluation dataset]() [1], as well as a Python adaptation of the [LOCATA challenge metrics](https://github.com/cevers/sap_locata_eval) [3].
+The repository also includes utilities to read and process items from the [LibriJump SST evaluation dataset](https://zenodo.org/records/15791948) [1], as well as a Python adaptation of the [LOCATA challenge metrics](https://github.com/cevers/sap_locata_eval) [3].
 
 ---
 
@@ -27,13 +27,11 @@ Given ground-truth and predicted tracks, the following SST objectives are evalua
 * Recall
 
 ### Localization
-
 * Mean localization error
 * Median localization error
 * Localization accuracy
 
 ### Association
-
 * Association accuracy
 * Precision
 * Recall
@@ -65,7 +63,7 @@ Readers are referred to [1], [2], and [3] for detailed theoretical background on
 
 This repository includes tools to read and process items from the LibriJump SST evaluation dataset [1].
 
-The dataset can be downloaded from the [official LibriJump repository]() or obtained from the dataset authors (see [1] for details).
+The dataset can be downloaded from the [official LibriJump repository](https://zenodo.org/records/15791948).
 
 ---
 
@@ -92,7 +90,7 @@ Two example scripts are provided to demonstrate how to run the metrics:
 * `dummy_example.py`
   * Similar evaluation pipeline applied to LibriJump dataset items
 
-Both scripts generate YAML files containing metric results in the `dummy_examples/` directory.
+Both scripts generate YAML files containing metric results in the `./dummy_examples` directory.
 
 
 ## Environment Setup
@@ -109,7 +107,7 @@ Both scripts generate YAML files containing metric results in the `dummy_example
   pip install -r requirements_metrics.txt
   ```
 
-It is recommended to use a dedicated virtual environment.
+It is recommended to use a dedicated virtual environment:
 
   ```bash
   conda create -n sstracking_metrics python=3.12
@@ -137,4 +135,4 @@ If you use this code or the provided metrics in your research, please cite:
 ## Licenses
 This project is licensed under the MIT License.
 It uses third-party libraries and datasets under their respective licenses.
-See THIRD_PARTY_LICENSES for details.
+See THIRD_PARTY_LICENSES.txt for details.
