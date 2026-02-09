@@ -14,6 +14,7 @@ import json
 import librosa
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
+import warnings
 
 
 def read_audio(path: str, FS):
@@ -79,7 +80,10 @@ def time_to_frame(tensor: np.ndarray, spectro_params: dict):
 
     tensor_per_frame = windows[:: spectro_params["hop_length"]]
 
-    out = np.nanmean(tensor_per_frame, axis=-1)
+    with warnings.catch_warnings():
+        # Ignore RuntimeWarning of nanmean when an empty slice occurs
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        out = np.nanmean(tensor_per_frame, axis=-1)
 
     return out
 
