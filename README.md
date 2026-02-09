@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository provides a Python pipeline for evaluating Sound Source Tracking (SST) systems. Given a multichannel audio recording, a SST system estimates the time-varying positions of sound sources. 
+This repository provides a Python pipeline for evaluating Sound Source Tracking (SST) systems. Given a multichannel audio recording, a SST system estimates the time-varying positions of sound sources.
 This toolkit enables the quantitative evaluation of such systems using standard tracking metrics covering detection, localization, and association objectives.
 
 The repository also includes utilities to read and process items from the [LibriJump SST evaluation dataset](https://zenodo.org/records/15791948) [1], as well as a Python adaptation of the [LOCATA challenge metrics](https://github.com/cevers/sap_locata_eval) [3].
@@ -11,9 +11,17 @@ The repository also includes utilities to read and process items from the [Libri
 
 ## Scope and Assumptions
 
-* Source positions are represented as time-varying Direction of Arrival (DOA) using azimuth and elevation angles.
-* Silent source frames are represented by NaN values.
-* Distances between predictions and ground truths are computed using angular distance.
+- Source positions are represented as time-varying Direction of Arrival (DOA) using azimuth and elevation angles.
+- Silent source frames are represented by NaN values.
+- Distances between predictions and ground truths are computed using angular distance.
+
+---
+
+## Installation
+
+```bash
+pip install git+https://github.com/Orange-OpenSource/sstracking_metrics
+```
 
 ---
 
@@ -22,19 +30,22 @@ The repository also includes utilities to read and process items from the [Libri
 Given ground-truth and predicted tracks, the following SST objectives are evaluated:
 
 ### Detection
-* Detection accuracy
-* Precision
-* Recall
+
+- Detection accuracy
+- Precision
+- Recall
 
 ### Localization
-* Mean localization error
-* Median localization error
-* Localization accuracy
+
+- Mean localization error
+- Median localization error
+- Localization accuracy
 
 ### Association
-* Association accuracy
-* Precision
-* Recall
+
+- Association accuracy
+- Precision
+- Recall
 
 Additionally, a Python implementation of the [LOCATA challenge metrics](https://github.com/cevers/sap_locata_eval) [3] is provided in:
 
@@ -48,14 +59,14 @@ Readers are referred to [1], [2], and [3] for detailed theoretical background on
 
 ## Notes on SST Metrics
 
-* All metrics rely on a matching step between ground-truth and predicted tracks to identify:
-  * True Positives (TPs)
-  * False Positives (FPs)
-  * False Negatives (FNs)
-* An optional gating mechanism can be applied during matching to discard predictions that are too far from ground-truth positions. Predictions exceeding a distance threshold are counted as FPs.
-* Localization and association metrics are computed only on TPs.
-* Localization accuracy is defined as the percentage of predictions located within a given threshold from the ground truth.
-* Association metrics correspond to a subset of the Higher-Order Tracking Accuracy (HOTA) framework [2].
+- All metrics rely on a matching step between ground-truth and predicted tracks to identify:
+  - True Positives (TPs)
+  - False Positives (FPs)
+  - False Negatives (FNs)
+- An optional gating mechanism can be applied during matching to discard predictions that are too far from ground-truth positions. Predictions exceeding a distance threshold are counted as FPs.
+- Localization and association metrics are computed only on TPs.
+- Localization accuracy is defined as the percentage of predictions located within a given threshold from the ground truth.
+- Association metrics correspond to a subset of the Higher-Order Tracking Accuracy (HOTA) framework [2].
 
 ---
 
@@ -71,12 +82,10 @@ The dataset can be downloaded from the [official LibriJump repository](https://z
 
 ```
 .
-├── tracking_metrics/        # SST metrics implementations
+├── src/tracking_metrics/    # SST metrics implementations
 ├── dummy_examples/          # Example of YAML metric outputs
 ├── dummy_example_metrics.py # Minimal fabricated example
 ├── dummy_example.py         # Example using the LibriJump dataset
-├── requirements.txt
-├── requirements_metrics.txt
 ```
 
 ---
@@ -85,28 +94,28 @@ The dataset can be downloaded from the [official LibriJump repository](https://z
 
 Two example scripts are provided to demonstrate how to run the metrics:
 
-* `dummy_example_metrics.py`
-  * Minimal example using fabricated data
-* `dummy_example.py`
-  * Similar evaluation pipeline applied to LibriJump dataset items
+- `dummy_example_metrics.py`
+  - Minimal example using fabricated data
+- `dummy_example.py`
+  - Similar evaluation pipeline applied to LibriJump dataset items
 
 Both scripts generate YAML files containing metric results in the `./dummy_examples` directory.
 
-
 ## Environment Setup
 
-* To run both example scripts, run the following command:
+It is recommended to use a dedicated virtual environment before installing the package, either using conda/mamba
 
-  ```bash
-  pip install -r requirements.txt
-  ```
+```bash
+conda create -n sstracking_metrics python=3.12
+conda activate sstracking_metrics
+```
 
-It is recommended to use a dedicated virtual environment:
+or a classic venv
 
-  ```bash
-  conda create -n sstracking_metrics python=3.12
-  conda activate sstracking_metrics
-  ```
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
 ---
 
@@ -127,6 +136,7 @@ If you use this code or the provided metrics in your research, please cite:
 ---
 
 ## Licenses
+
 This project is licensed under the MIT License.
 It uses third-party libraries and datasets under their respective licenses.
 See THIRD_PARTY_LICENSES.txt for details.

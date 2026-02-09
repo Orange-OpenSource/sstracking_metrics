@@ -1,6 +1,0 @@
-librosa
-numpy
-pygmtools
-pyyaml
-scipy
-tqdm

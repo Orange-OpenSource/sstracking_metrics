@@ -9,8 +9,11 @@
 #
 """
 
+from typing import Callable
+
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class AssociationMetric(BaseMetric):
@@ -24,10 +27,10 @@ class AssociationMetric(BaseMetric):
 
     Args:
         threshold_gating (float): Maximum allowed distance/error for the matchin
-        similarity_function (callable): Function to compute similarity/distance between detections for the matching
+        similarity_function (Callable): Function to compute similarity/distance between detections for the matching
     """
 
-    def __init__(self, threshold_gating: float, similarity_function: callable):
+    def __init__(self, threshold_gating: float, similarity_function: Callable):
         super().__init__(threshold_gating, similarity_function)
 
     def run(self, gt_det: Detection, pr_det: Detection):
@@ -59,7 +62,9 @@ class AssociationMetric(BaseMetric):
 
         # Calculate association accuracy (AssA)
         # Formula: matches / (gt_counts + pr_counts - matches)
-        ass_a = matches_count / np.maximum(1, gt_id_count + pr_id_count - matches_count)
+        ass_a = matches_count / np.maximum(
+            1, gt_id_count + pr_id_count - matches_count
+        )
         AssA = np.sum(matches_count * ass_a) / np.maximum(1, self.TP)
 
         # Calculate association recall (AssRe)

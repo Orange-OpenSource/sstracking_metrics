@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name="sstracking_metrics"
+authors=[
+    {name="Taous Iatariene", email="taous.iatariene@gmail.com"}
+]
+version="1.0.0"
+readme = {file = "README.md", content-type = "text/markdown"}
+license-files = ["LICENSE*.txt"]
+requires-python=">= 3.12"
+dependencies=[
+    "librosa >= 0.11.0", # only for utils dataset
+    "numpy >= 2.3.5",
+    "pygmtools >= 0.5.5",
+    "pyyaml >= 6.0.3",
+    "scipy >= 1.17.0",
+    "tqdm >= 4.67.3"
+]
+
+[project.urls]
+Repository="https://github.com/Orange-OpenSource/sstracking_metrics"

@@ -9,8 +9,11 @@
 #
 """
 
+from typing import Callable
+
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class DetectionMetric(BaseMetric):
@@ -19,13 +22,13 @@ class DetectionMetric(BaseMetric):
 
     """
 
-    def __init__(self, threshold_gating: float, similarity_function: callable):
+    def __init__(self, threshold_gating: float, similarity_function: Callable):
         """
         Initialize the DetectionMetric class.
 
         Args:
             threshold_gating (float): Maximum allowed distance/error for the matchin
-            similarity_function (callable): Function to compute similarity/distance between detections for the matching
+            similarity_function (Callable): Function to compute similarity/distance between detections for the matching
 
         """
         super().__init__(threshold_gating, similarity_function)

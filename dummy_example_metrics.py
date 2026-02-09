@@ -10,15 +10,12 @@
 """
 
 import logging
-import sys
 from pathlib import Path
 
-# Add tracking_metrics to Python path
-sys.path.append("tracking_metrics")
-
 import numpy as np
-from metric_evaluator import MetricEvaluator
-from utils_metrics import Detection, angular_distance
+
+from sstracking_metrics.metric_evaluator import MetricEvaluator
+from sstracking_metrics.utils_metrics import Detection, angular_distance
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

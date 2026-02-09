@@ -16,12 +16,13 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from association import AssociationMetric
-from detection import DetectionMetric
-from localization import LocalizationMetric
-from locata import LOCATAMetric
 from tqdm import tqdm
-from utils_metrics import Detection
+
+from .association import AssociationMetric
+from .detection import DetectionMetric
+from .localization import LocalizationMetric
+from .locata import LOCATAMetric
+from .utils_metrics import Detection
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,9 @@ class MetricEvaluator:
         logger.info(
             f"Running {self.bootstrap_rate:.0%}-{self.bootstrap_times} bootstrap..."
         )
-        logger.info(f"Computing the following metrics: {', '.join(self.tocompute)}.")
+        logger.info(
+            f"Computing the following metrics: {', '.join(self.tocompute)}."
+        )
 
         # Perform bootstrap evaluation
         for bootstrap in tqdm(range(self.bootstrap_times)):
@@ -101,20 +104,28 @@ class MetricEvaluator:
             fixed_random = random.Random(bootstrap)  # Set seed
 
             # bootstrap : sample scenes with replacement
-            scenes_bootstrap = fixed_random.choices(scenes, k=nsent_per_bootstrap)
+            scenes_bootstrap = fixed_random.choices(
+                scenes, k=nsent_per_bootstrap
+            )
 
-            metrics_bootstrap[bootstrap] = self.run_one_bootstrap(scenes_bootstrap)
-            logger.info(f"Total time : {time.time()-begin_t:.3f} s")
+            metrics_bootstrap[bootstrap] = self.run_one_bootstrap(
+                scenes_bootstrap
+            )
+            logger.info(f"Total time : {time.time() - begin_t:.3f} s")
 
         # Calculate average results across all bootstraps
         out_values, out_stats = self.avg_metric_results(metrics_bootstrap)
 
         # Save results to YAML files
         name = f"{name}_{'_'.join(self.tocompute)}"
-        with open(self.folder_results / f"{name}_results_bootstrap.yaml", "w") as file:
+        with open(
+            self.folder_results / f"{name}_results_bootstrap.yaml", "w"
+        ) as file:
             yaml.safe_dump(out_values, file, default_flow_style=False)
 
-        with open(self.folder_results / f"{name}_stats_bootstrap.yaml", "w") as file:
+        with open(
+            self.folder_results / f"{name}_stats_bootstrap.yaml", "w"
+        ) as file:
             yaml.safe_dump(out_stats, file, default_flow_style=False)
 
         return
@@ -163,7 +174,9 @@ class MetricEvaluator:
         similarity, matches = None, None
         for metric in self.tocompute:
             if metric == "locata":
-                output[metric] = self.metrics[metric](gt_detection, pr_detection)
+                output[metric] = self.metrics[metric](
+                    gt_detection, pr_detection
+                )
             else:
                 output[metric] = self.metrics[metric](
                     gt_detection, pr_detection, similarity, matches
@@ -211,18 +224,29 @@ class MetricEvaluator:
             for metric in self.tocompute:
                 if metric == "locata":
                     # LOCATA metrics are stored in mean/std form
-                    for submetric in metrics_bootstrap[bootstrap][metric].keys():
+                    for submetric in metrics_bootstrap[bootstrap][
+                        metric
+                    ].keys():
                         if submetric not in out_values[metric].keys():
-                            out_values[metric][submetric] = {"mean": [], "std": []}
+                            out_values[metric][submetric] = {
+                                "mean": [],
+                                "std": [],
+                            }
 
                         out_values[metric][submetric]["mean"].append(
-                            metrics_bootstrap[bootstrap][metric][submetric]["mean"]
+                            metrics_bootstrap[bootstrap][metric][submetric][
+                                "mean"
+                            ]
                         )
                         out_values[metric][submetric]["std"].append(
-                            metrics_bootstrap[bootstrap][metric][submetric]["std"]
+                            metrics_bootstrap[bootstrap][metric][submetric][
+                                "std"
+                            ]
                         )
                 else:
-                    for submetric in metrics_bootstrap[bootstrap][metric].keys():
+                    for submetric in metrics_bootstrap[bootstrap][
+                        metric
+                    ].keys():
                         if submetric not in out_values[metric].keys():
                             out_values[metric][submetric] = []
 
@@ -240,7 +264,9 @@ class MetricEvaluator:
                             "mean": np.mean(
                                 out_values[metric][submetric]["mean"]
                             ).item(),
-                            "std": np.std(out_values[metric][submetric]["mean"]).item(),
+                            "std": np.std(
+                                out_values[metric][submetric]["mean"]
+                            ).item(),
                             "median": np.median(
                                 out_values[metric][submetric]["mean"]
                             ).item(),
@@ -249,7 +275,9 @@ class MetricEvaluator:
                             "mean": np.mean(
                                 out_values[metric][submetric]["std"]
                             ).item(),
-                            "std": np.std(out_values[metric][submetric]["std"]).item(),
+                            "std": np.std(
+                                out_values[metric][submetric]["std"]
+                            ).item(),
                             "median": np.median(
                                 out_values[metric][submetric]["std"]
                             ).item(),
@@ -260,7 +288,9 @@ class MetricEvaluator:
                     out_stats[metric][submetric] = {
                         "mean": np.mean(out_values[metric][submetric]).item(),
                         "std": np.std(out_values[metric][submetric]).item(),
-                        "median": np.median(out_values[metric][submetric]).item(),
+                        "median": np.median(
+                            out_values[metric][submetric]
+                        ).item(),
                     }
 
         return out_values, out_stats

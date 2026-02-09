@@ -9,8 +9,11 @@
 #
 """
 
+from typing import Callable
+
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class LocalizationMetric(BaseMetric):
@@ -19,14 +22,17 @@ class LocalizationMetric(BaseMetric):
     """
 
     def __init__(
-        self, threshold_gating: float, similarity_function: callable, tolerance: float
+        self,
+        threshold_gating: float,
+        similarity_function: Callable,
+        tolerance: float,
     ):
         """
         Initialize the LocalizationMetric class.
 
         Args:
             threshold_gating (float): Maximum allowed distance/error for the matchin
-            similarity_function (callable): Function to compute similarity/distance between detections for the matching
+            similarity_function (Callable): Function to compute similarity/distance between detections for the matching
 
             tolerance (float): Angle tolerance in degrees for accuracy calculation
         """

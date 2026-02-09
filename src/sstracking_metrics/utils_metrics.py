@@ -9,6 +9,8 @@
 #
 """
 
+from typing import Callable
+
 import numpy as np
 import pygmtools as pygm
 
@@ -66,13 +68,13 @@ class BaseMetric:
 
     Attributes:
         threshold_gating (float): Maximum allowed distance for matching
-        similarity_function (callable): Function to compute similarity between predictions and ground truth
+        similarity_function (Callable): Function to compute similarity between predictions and ground truth
         similarity_matrix (np.ndarray): Computed similarity matrix
         matches (np.ndarray): Binary matrix indicating matched pairs
         TP (int): Number of true positive matches
     """
 
-    def __init__(self, threshold_gating: float, similarity_function: callable):
+    def __init__(self, threshold_gating: float, similarity_function: Callable):
         self.threshold_gating = threshold_gating
         self.similarity_function = similarity_function
 
@@ -109,7 +111,9 @@ class BaseMetric:
                 threshold_gating=self.threshold_gating,
                 similarity_function=self.similarity_function,
             )
-            matches_all = pygm.linear_solvers.hungarian(s=-self.similarity_matrix)
+            matches_all = pygm.linear_solvers.hungarian(
+                s=-self.similarity_matrix
+            )
             mask = np.logical_and(
                 np.equal(matches_all, 1),
                 np.not_equal(self.similarity_matrix, HIGH_COST),
@@ -174,7 +178,7 @@ def compute_similarity(
     gt_doa: np.ndarray,
     pr_doa: np.ndarray,
     threshold_gating: float,
-    similarity_function: callable,
+    similarity_function: Callable,
 ):
     """
     Compute similarity matrix between ground truth and predicted DOAs.
@@ -183,7 +187,7 @@ def compute_similarity(
         gt_doa (np.ndarray): Ground truth DOA with shape [time, Jgt, 2]
         pr_doa (np.ndarray): Predicted DOA with shape [time, Jpr, 2]
         threshold_gating (float): Maximum allowed distance for matching
-        similarity_function (callable): Function to compute similarity between predictions and ground truth
+        similarity_function (Callable): Function to compute similarity between predictions and ground truth
 
     Returns:
         np.ndarray: Similarity matrix with shape [time, Jgt, Jpr]
@@ -201,7 +205,9 @@ def compute_similarity(
             praz = pr_doa[:, jpr, 0]
             prel = pr_doa[:, jpr, 1]
 
-            similarity_matrix[:, jgt, jpr] = similarity_function(gtaz, gtel, praz, prel)
+            similarity_matrix[:, jgt, jpr] = similarity_function(
+                gtaz, gtel, praz, prel
+            )
 
     similarity_matrix[np.isnan(similarity_matrix)] = HIGH_COST
     similarity_matrix[similarity_matrix > threshold_gating] = HIGH_COST
@@ -244,8 +250,8 @@ def wrap_to_pi(angle):
     two_pi, pi = 360, 180
     angle = angle % two_pi  # reduce the angle
     angle = (
-        angle + two_pi
-    ) % two_pi  # force it to be the positive remainder, so that 0 <= angle < two_pi
+        (angle + two_pi) % two_pi
+    )  # force it to be the positive remainder, so that 0 <= angle < two_pi
     if (
         angle > pi
     ).any():  # force into the minimum absolute value residue class, so that -pi < angle <= pi

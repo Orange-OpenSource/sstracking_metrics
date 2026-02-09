@@ -11,7 +11,8 @@
 
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-from utils_metrics import HIGH_COST, Detection, angdiff, get_fragments
+
+from .utils_metrics import HIGH_COST, Detection, angdiff, get_fragments
 
 
 class LOCATAMetric:
@@ -44,7 +45,6 @@ class LOCATAMetric:
         gt_det: Detection,
         pr_det: Detection,
     ):
-
         T = gt_det.doa.shape[0]
         self.timestamps = np.linspace(0, T * self.frame_len, T)
 
@@ -86,7 +86,6 @@ class LOCATAMetric:
         """
 
         for t in range(len(self.timestamps)):
-
             # Number of active sources and number of tracks at this time stamp:
             active_src_idx = []
             for src_idx in range(self.num_srcs):
@@ -138,8 +137,12 @@ class LOCATAMetric:
                 # Active sources and active tracks
 
                 # @ 1) distance matrix
-                dist_mat_az = np.full((num_active_srcs, num_active_trks), HIGH_COST)
-                dist_mat_el = np.full((num_active_srcs, num_active_trks), HIGH_COST)
+                dist_mat_az = np.full(
+                    (num_active_srcs, num_active_trks), HIGH_COST
+                )
+                dist_mat_el = np.full(
+                    (num_active_srcs, num_active_trks), HIGH_COST
+                )
                 for trk_idx in range(num_active_trks):
                     for src_idx in range(num_active_srcs):
                         dist_mat_az[src_idx, trk_idx] = abs(
@@ -167,7 +170,9 @@ class LOCATAMetric:
                     dist_mat_az, maximize=False
                 )
                 assignment = np.full((self.num_srcs,), -1)
-                assignment[active_src_idx[match_row]] = active_trk_idx[match_col]
+                assignment[active_src_idx[match_row]] = active_trk_idx[
+                    match_col
+                ]
 
                 # OSPA
                 for p_idx in range(len(self.OSPA_p)):
@@ -184,7 +189,9 @@ class LOCATAMetric:
                         / max(num_active_trks, num_active_srcs)
                         * (
                             self.OSPA_cutoff ** self.OSPA_p[p_idx]
-                            * abs(num_active_trks - num_active_srcs)  # card error
+                            * abs(
+                                num_active_trks - num_active_srcs
+                            )  # card error
                             + cost  # loc error
                         )
                     ) ** (1 / self.OSPA_p[p_idx])
@@ -198,13 +205,16 @@ class LOCATAMetric:
                     [i for i in active_trk_idx if i in list(assignment)]
                 )
 
-                self.assoc_trk_mat[t, valid_trks] = self.all_src_idx[assignment != -1]
+                self.assoc_trk_mat[t, valid_trks] = self.all_src_idx[
+                    assignment != -1
+                ]
                 self.N_false[t] += len(unassoc_trks)
                 self.N_valid[t] += len(valid_trks)
 
                 # missing source detections
                 unassoc_srcs = np.array(
-                    [i for i in active_src_idx if assignment[i] == -1], dtype=int
+                    [i for i in active_src_idx if assignment[i] == -1],
+                    dtype=int,
                 )
                 self.N_miss[t, unassoc_srcs] += 1
 
@@ -217,7 +227,10 @@ class LOCATAMetric:
                         elif assignment[src_idx] == -1:
                             # source currently either missed or died - ignore
                             continue
-                        elif assignment[src_idx] != self.prev_nonzero_assign[src_idx]:
+                        elif (
+                            assignment[src_idx]
+                            != self.prev_nonzero_assign[src_idx]
+                        ):
                             self.N_swap[t, src_idx] += 1
                 # Save assignment for eval of track swaps at next time step:
                 for src_idx in self.all_src_idx:
@@ -262,7 +275,6 @@ class LOCATAMetric:
         track_frag_rate = np.full(len(self.all_src_idx), np.nan)
 
         for src_idx in self.all_src_idx:
-
             fragments = get_fragments(gt_det.vad[:, src_idx])
             VAD_srt_idx = [frag[0] for frag in fragments]
             VAD_end_idx = [frag[1] for frag in fragments]
@@ -285,7 +297,9 @@ class LOCATAMetric:
                     ]
 
                 # pd
-                pd[src_idx].append(np.sum(1 - this_miss).item() / len(this_miss))
+                pd[src_idx].append(
+                    np.sum(1 - this_miss).item() / len(this_miss)
+                )
 
                 # TSR
                 period_duration = (
@@ -295,7 +309,8 @@ class LOCATAMetric:
                 TSR[period_idx] = (
                     np.sum(
                         self.N_swap[
-                            VAD_srt_idx[period_idx] : VAD_end_idx[period_idx], src_idx
+                            VAD_srt_idx[period_idx] : VAD_end_idx[period_idx],
+                            src_idx,
                         ]
                     )
                     / period_duration
@@ -314,7 +329,8 @@ class LOCATAMetric:
                     )[0]
                 ) + np.sum(
                     self.N_swap[
-                        VAD_srt_idx[period_idx] : VAD_end_idx[period_idx], src_idx
+                        VAD_srt_idx[period_idx] : VAD_end_idx[period_idx],
+                        src_idx,
                     ],
                     axis=0,
                 )
@@ -373,13 +389,16 @@ class LOCATAMetric:
             for submetric in metrics_per_scene[scene]["locata"].keys():
                 try:
                     toappend = np.array(
-                        metrics_per_scene[scene]["locata"][submetric], dtype=np.float32
+                        metrics_per_scene[scene]["locata"][submetric],
+                        dtype=np.float32,
                     ).flatten()
                 except ValueError:  # list of list doesn't have same len
                     toappend = np.array(
                         [
                             kk
-                            for k in metrics_per_scene[scene]["locata"][submetric]
+                            for k in metrics_per_scene[scene]["locata"][
+                                submetric
+                            ]
                             for kk in k
                         ]
                     )
@@ -389,6 +408,9 @@ class LOCATAMetric:
 
         for submetric in out.keys():
             l = out[submetric].copy()
-            out[submetric] = {"mean": np.mean(l).item(), "std": np.std(l).item()}
+            out[submetric] = {
+                "mean": np.mean(l).item(),
+                "std": np.std(l).item(),
+            }
 
         return out
