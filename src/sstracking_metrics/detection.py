@@ -10,7 +10,8 @@
 """
 
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class DetectionMetric(BaseMetric):

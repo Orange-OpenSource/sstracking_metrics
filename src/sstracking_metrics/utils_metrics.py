@@ -109,7 +109,9 @@ class BaseMetric:
                 threshold_gating=self.threshold_gating,
                 similarity_function=self.similarity_function,
             )
-            matches_all = pygm.linear_solvers.hungarian(s=-self.similarity_matrix)
+            matches_all = pygm.linear_solvers.hungarian(
+                s=-self.similarity_matrix
+            )
             mask = np.logical_and(
                 np.equal(matches_all, 1),
                 np.not_equal(self.similarity_matrix, HIGH_COST),
@@ -201,7 +203,9 @@ def compute_similarity(
             praz = pr_doa[:, jpr, 0]
             prel = pr_doa[:, jpr, 1]
 
-            similarity_matrix[:, jgt, jpr] = similarity_function(gtaz, gtel, praz, prel)
+            similarity_matrix[:, jgt, jpr] = similarity_function(
+                gtaz, gtel, praz, prel
+            )
 
     similarity_matrix[np.isnan(similarity_matrix)] = HIGH_COST
     similarity_matrix[similarity_matrix > threshold_gating] = HIGH_COST
@@ -244,8 +248,8 @@ def wrap_to_pi(angle):
     two_pi, pi = 360, 180
     angle = angle % two_pi  # reduce the angle
     angle = (
-        angle + two_pi
-    ) % two_pi  # force it to be the positive remainder, so that 0 <= angle < two_pi
+        (angle + two_pi) % two_pi
+    )  # force it to be the positive remainder, so that 0 <= angle < two_pi
     if (
         angle > pi
     ).any():  # force into the minimum absolute value residue class, so that -pi < angle <= pi

@@ -10,7 +10,8 @@
 """
 
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class LocalizationMetric(BaseMetric):
@@ -19,7 +20,10 @@ class LocalizationMetric(BaseMetric):
     """
 
     def __init__(
-        self, threshold_gating: float, similarity_function: callable, tolerance: float
+        self,
+        threshold_gating: float,
+        similarity_function: callable,
+        tolerance: float,
     ):
         """
         Initialize the LocalizationMetric class.

@@ -10,7 +10,8 @@
 """
 
 import numpy as np
-from utils_metrics import BaseMetric, Detection
+
+from .utils_metrics import BaseMetric, Detection
 
 
 class AssociationMetric(BaseMetric):
@@ -59,7 +60,9 @@ class AssociationMetric(BaseMetric):
 
         # Calculate association accuracy (AssA)
         # Formula: matches / (gt_counts + pr_counts - matches)
-        ass_a = matches_count / np.maximum(1, gt_id_count + pr_id_count - matches_count)
+        ass_a = matches_count / np.maximum(
+            1, gt_id_count + pr_id_count - matches_count
+        )
         AssA = np.sum(matches_count * ass_a) / np.maximum(1, self.TP)
 
         # Calculate association recall (AssRe)
