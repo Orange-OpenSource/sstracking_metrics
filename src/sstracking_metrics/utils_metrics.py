@@ -9,6 +9,8 @@
 #
 """
 
+from typing import Callable
+
 import numpy as np
 import pygmtools as pygm
 
@@ -66,13 +68,13 @@ class BaseMetric:
 
     Attributes:
         threshold_gating (float): Maximum allowed distance for matching
-        similarity_function (callable): Function to compute similarity between predictions and ground truth
+        similarity_function (Callable): Function to compute similarity between predictions and ground truth
         similarity_matrix (np.ndarray): Computed similarity matrix
         matches (np.ndarray): Binary matrix indicating matched pairs
         TP (int): Number of true positive matches
     """
 
-    def __init__(self, threshold_gating: float, similarity_function: callable):
+    def __init__(self, threshold_gating: float, similarity_function: Callable):
         self.threshold_gating = threshold_gating
         self.similarity_function = similarity_function
 
@@ -176,7 +178,7 @@ def compute_similarity(
     gt_doa: np.ndarray,
     pr_doa: np.ndarray,
     threshold_gating: float,
-    similarity_function: callable,
+    similarity_function: Callable,
 ):
     """
     Compute similarity matrix between ground truth and predicted DOAs.
@@ -185,7 +187,7 @@ def compute_similarity(
         gt_doa (np.ndarray): Ground truth DOA with shape [time, Jgt, 2]
         pr_doa (np.ndarray): Predicted DOA with shape [time, Jpr, 2]
         threshold_gating (float): Maximum allowed distance for matching
-        similarity_function (callable): Function to compute similarity between predictions and ground truth
+        similarity_function (Callable): Function to compute similarity between predictions and ground truth
 
     Returns:
         np.ndarray: Similarity matrix with shape [time, Jgt, Jpr]
