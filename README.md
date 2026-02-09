@@ -66,7 +66,7 @@ Readers are referred to [1], [2], and [3] for detailed theoretical background on
 - An optional gating mechanism can be applied during matching to discard predictions that are too far from ground-truth positions. Predictions exceeding a distance threshold are counted as FPs.
 - Localization and association metrics are computed only on TPs.
 - Localization accuracy is defined as the percentage of predictions located within a given threshold from the ground truth.
-- Association metrics correspond to a subset of the Higher-Order Tracking Accuracy (HOTA) framework [2].
+- Detection and association metrics correspond to subsets from the Higher-Order Tracking Accuracy (HOTA) metrics [2].
 
 ---
 
